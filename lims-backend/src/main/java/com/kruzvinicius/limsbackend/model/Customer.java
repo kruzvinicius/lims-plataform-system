@@ -2,8 +2,10 @@ package com.kruzvinicius.limsbackend.model;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import org.hibernate.envers.Audited;
 
 @Entity
+@Audited
 @Table(name = "customers")
 @Data
 public class Customer {

@@ -1,24 +1,9 @@
-### Create a new costumer (only for have one)
-POST http://localhost:8080/api/customers
+### Adicionar o primeiro resultado à amostra 1
+POST http://localhost:8080/api/samples/1/results
 Content-Type: application/json
 
 {
-  "corporateReason": "Laboratorio Vinicius",
-  "email": "vinicius@lims.com",
-  "phone": "12345678",
-  "taxId": "123"
-}
-
-###
-
-### Create a new sample to ID 1
-POST http://localhost:8080/api/samples
-Content-Type: application/json
-
-{
-  "barcode": "Lims-Final-Check  ",
-  "materialType": "Solo de Mineração",
-  "customer": {
-    "id": 6
-  }
+  "parameterName": "Iron (Fe)",
+  "resultValue": "145.2",
+  "unit": "mg/kg"
 }

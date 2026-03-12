@@ -24,12 +24,13 @@ A comprehensive Laboratory Information Management System (LIMS) focused on data 
 - **Database:** PostgreSQL (Docker)
 - **Tooling:** Lombok, Maven
 
-## 📈 Roadmap
-- [x] Backend initial setup & Database Connection
-- [x] Customer & Sample relational mapping
-- [ ] Data Audit Log (Hibernate Envers)
-- [ ] Security & Auth (Spring Security + JWT)
-- [ ] Frontend Development (React)
-
+## 📈 Development Roadmap
+- [x] **Phase 1: Foundation** - Spring Boot 3 environment setup with PostgreSQL and Docker containerization.
+- [x] **Phase 2: Domain Mapping** - Robust relational mapping between Customers and Samples using JPA/Hibernate.
+- [x] **Phase 3: Data Integrity & Audit** - Implementation of Hibernate Envers for full traceability and historical record tracking.
+- [x] **Phase 4: API Optimization** - Decoupling entities from the web layer using the DTO (Data Transfer Object) pattern for enhanced security.
+- [ ] **Phase 5: Business Logic Layer** - Refactoring to Service Layer to ensure clean code and separation of concerns.
+- [ ] **Phase 6: Security & Identity** - Implementing Authentication and Authorization with Spring Security and JWT.
+- [ ] **Phase 7: Frontend Interface** - Building a responsive dashboard with React to consume the LIMS API.
 ---
-**Developed by Vinicius Rodrigues Cruz** [GitHub](https://github.com/kruzvinicius) | [LinkedIn](https://www.linkedin.com/in/vinicius-rodrigues-cruz/)
+**Developed by Vinicius Rodrigues Cruz** [GitHub](https://github.com/kruzvinicius) | [LinkedIn](https://www.linkedin.com/in/vinicius-rodrigues-cruz-832985292/)

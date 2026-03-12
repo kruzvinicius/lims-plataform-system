@@ -7,17 +7,7 @@
 
 **Status: 🚧 Work in Progress (WIP)**
 
-## 🇧🇷 Sobre o Projeto
-Este é um sistema de Gerenciamento de Informações de Laboratório (LIMS) completo, focado em integridade de dados e rastreabilidade. Desenvolvido como parte do meu portfólio de Engenharia de Software, o sistema gerencia o ciclo de vida de amostras laboratoriais, desde o recebimento até a entrega de resultados.
-
-### Principais Funcionalidades (Backend):
-- **Gestão de Clientes:** Cadastro e relacionamento de entidades solicitantes.
-- **Controle de Amostras:** Rastreamento via Barcode e tipos de materiais.
-- **Persistência Robusta:** Uso de PostgreSQL com relacionamentos complexos via JPA/Hibernate.
-
----
-
-## 🇺🇸 About the Project
+## About the Project
 A comprehensive Laboratory Information Management System (LIMS) focused on data integrity and traceability. This full-stack platform manages the entire lifecycle of lab samples, from reception to final reporting.
 
 ### Key Features:

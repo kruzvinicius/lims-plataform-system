@@ -3,8 +3,6 @@ package com.kruzvinicius.limsbackend.controller;
 import com.kruzvinicius.limsbackend.dto.AuditLogDTO;
 import com.kruzvinicius.limsbackend.dto.SampleDTO;
 import com.kruzvinicius.limsbackend.dto.TestResultDTO;
-import com.kruzvinicius.limsbackend.model.Sample;
-import com.kruzvinicius.limsbackend.model.TestResult;
 import com.kruzvinicius.limsbackend.service.SampleService;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
@@ -47,9 +45,10 @@ public class SampleController {
         return ResponseEntity.ok(sampleService.create(sampleDTO));
     }
 
+
     @PatchMapping("/{id}/status")
-    public Sample updateSampleStatus(@PathVariable Long id, @RequestBody String status) {
-        return sampleService.updateStatus(id, status);
+    public ResponseEntity<SampleDTO> updateSampleStatus(@PathVariable Long id, @RequestBody String status) {
+        return ResponseEntity.ok(sampleService.updateStatus(id, status));
     }
 
     @GetMapping("/{id}/history")
@@ -57,9 +56,10 @@ public class SampleController {
         return sampleService.getHistory(id);
     }
 
+
     @PostMapping("/{id}/results")
-    public ResponseEntity<TestResult> addTestResult(@PathVariable Long id, @RequestBody TestResult result) {
-        return ResponseEntity.ok(sampleService.addResult(id, result));
+    public ResponseEntity<TestResultDTO> addTestResult(@PathVariable Long id, @Valid @RequestBody TestResultDTO resultDTO) {
+        return ResponseEntity.ok(sampleService.addResult(id, resultDTO));
     }
 
     @GetMapping("/{id}/results")

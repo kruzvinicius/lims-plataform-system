@@ -32,10 +32,8 @@ public class SampleService {
     private final TestResultRepository testResultRepository;
     private final EntityManager entityManager;
 
-
     public Page<SampleDTO> findAll(Pageable pageable) {
         log.info("Fetching paginated samples - Page: {}, Size: {}", pageable.getPageNumber(), pageable.getPageSize());
-
         return sampleRepository.findAll(pageable)
                 .map(SampleDTO::fromEntity);
     }
@@ -65,11 +63,12 @@ public class SampleService {
     }
 
     @Transactional
-    public Sample updateStatus(Long id, String status) {
+    public SampleDTO updateStatus(Long id, String status) {
         Sample sample = sampleRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException(SAMPLE_NOT_FOUND));
         sample.setStatus(status);
-        return sampleRepository.save(sample);
+        Sample updatedSample = sampleRepository.save(sample);
+        return SampleDTO.fromEntity(updatedSample);
     }
 
     public List<AuditLogDTO> getHistory(Long id) {
@@ -97,11 +96,25 @@ public class SampleService {
     }
 
     @Transactional
-    public TestResult addResult(Long id, TestResult result) {
+    public TestResultDTO addResult(Long id, TestResultDTO dto) {
         Sample sample = sampleRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException(SAMPLE_NOT_FOUND));
+
+        TestResult result = new TestResult();
+        result.setParameterName(dto.getParameterName());
+        result.setResultValue(dto.getResultValue());
+        result.setUnit(dto.getUnit());
         result.setSample(sample);
-        return testResultRepository.save(result);
+
+        TestResult savedResult = testResultRepository.save(result);
+
+        return new TestResultDTO(
+                savedResult.getId(),
+                savedResult.getParameterName(),
+                savedResult.getResultValue(),
+                savedResult.getUnit(),
+                savedResult.getPerformedAt() != null ? savedResult.getPerformedAt().toString() : "Not recorded"
+        );
     }
 
     public List<TestResultDTO> getResults(Long id) {

@@ -9,18 +9,14 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
 
 import java.time.LocalDateTime;
+import java.util.stream.Collectors;
 
-/**
- * Global Exception Handler for the LIMS Backend.
- * Intercepts specific exceptions and returns standardized error responses.
- */
 @RestControllerAdvice
 @Slf4j
 public class GlobalExceptionHandler {
 
     /**
      * 404 - RESOURCE NOT FOUND
-     * Handles both custom EntityNotFoundException and Jakarta/JPA standard exception.
      */
     @ExceptionHandler({
             com.kruzvinicius.limsbackend.dto.exception.EntityNotFoundException.class,
@@ -37,17 +33,19 @@ public class GlobalExceptionHandler {
     }
 
     /**
-     * 400 - BAD REQUEST (Bean Validation)
-     * Handles @Valid errors in the Controller using Java 21's getFirst() method.
+     * 400 - BAD REQUEST (DTO validation).
      */
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ErrorDetails> handleValidationException(MethodArgumentNotValidException ex, WebRequest request) {
-        // Java 21 syntax: .getFirst() replaces .get(0)
-        String errorMessage = ex.getBindingResult().getFieldErrors().getFirst().getDefaultMessage();
+        String errors = ex.getBindingResult()
+                .getFieldErrors()
+                .stream()
+                .map(error -> error.getField() + ": " + error.getDefaultMessage())
+                .collect(Collectors.joining(", "));
 
         ErrorDetails error = new ErrorDetails(
                 LocalDateTime.now(),
-                "Validation Error: " + errorMessage,
+                "Validation Error: " + errors,
                 request.getDescription(false),
                 "INVALID_ARGUMENTS"
         );
@@ -55,8 +53,7 @@ public class GlobalExceptionHandler {
     }
 
     /**
-     * 400 - BAD REQUEST (Illegal Arguments)
-     * Handles cases where internal logic throws an IllegalArgumentException.
+     * 400 - BAD REQUEST (IllegalArgumentException)
      */
     @ExceptionHandler(IllegalArgumentException.class)
     public ResponseEntity<ErrorDetails> handleIllegalArgumentException(IllegalArgumentException ex, WebRequest request) {
@@ -70,14 +67,11 @@ public class GlobalExceptionHandler {
     }
 
     /**
-     * 500 - INTERNAL SERVER ERROR
-     * Generic fallback to catch unhandled errors and log them for debugging.
+     * 500 - INTERNAL SERVER ERROR (Fallback)
      */
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorDetails> handleGlobalException(Exception ex, WebRequest request) {
-        // Using 'ex' in the log to resolve the "parameter not used" warning
         log.error("A critical unexpected error occurred: ", ex);
-
         ErrorDetails error = new ErrorDetails(
                 LocalDateTime.now(),
                 "An unexpected internal server error occurred.",

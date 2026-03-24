@@ -1,22 +1,19 @@
 package com.kruzvinicius.limsbackend.service;
 
+import com.kruzvinicius.limsbackend.dto.*;
 import com.kruzvinicius.limsbackend.dto.exception.EntityNotFoundException;
-import com.kruzvinicius.limsbackend.dto.AuditLogDTO;
-import com.kruzvinicius.limsbackend.dto.SampleDTO;
-import com.kruzvinicius.limsbackend.dto.TestResultDTO;
-import com.kruzvinicius.limsbackend.model.Sample;
-import com.kruzvinicius.limsbackend.model.TestResult;
-import com.kruzvinicius.limsbackend.repository.SampleRepository;
-import com.kruzvinicius.limsbackend.repository.TestResultRepository;
+import com.kruzvinicius.limsbackend.model.*;
+import com.kruzvinicius.limsbackend.repository.*;
 import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.hibernate.envers.AuditReader;
 import org.hibernate.envers.AuditReaderFactory;
+import org.hibernate.envers.query.AuditEntity;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Page;
 
 import java.util.List;
 import java.util.Optional;
@@ -26,112 +23,122 @@ import java.util.Optional;
 @Slf4j
 public class SampleService {
 
-    private static final String SAMPLE_NOT_FOUND = "Sample not found";
-
     private final SampleRepository sampleRepository;
+    private final CustomerRepository customerRepository;
     private final TestResultRepository testResultRepository;
     private final EntityManager entityManager;
 
-    public Page<SampleDTO> findAll(Pageable pageable) {
-        log.info("Fetching paginated samples - Page: {}, Size: {}", pageable.getPageNumber(), pageable.getPageSize());
-        return sampleRepository.findAll(pageable)
-                .map(SampleDTO::fromEntity);
+    @Transactional(readOnly = true)
+    public Page<SampleResponse> findAll(Pageable pageable) {
+        return sampleRepository.findAll(pageable).map(this::mapToResponse);
     }
 
-    public List<SampleDTO> findByCustomer(Long customerId) {
+    @Transactional(readOnly = true)
+    public SampleResponse findById(Long id) {
+        return sampleRepository.findById(id)
+                .map(this::mapToResponse)
+                .orElseThrow(() -> new EntityNotFoundException("Sample not found with ID: " + id));
+    }
+
+    @Transactional(readOnly = true)
+    public List<SampleResponse> findByCustomer(Long customerId) {
         return sampleRepository.findByCustomerId(customerId).stream()
-                .map(SampleDTO::fromEntity)
+                .map(this::mapToResponse)
                 .toList();
     }
 
+    @Transactional(readOnly = true)
+    public Optional<SampleResponse> findByBarcode(String barcode) {
+        return sampleRepository.findByBarcode(barcode).map(this::mapToResponse);
+    }
+
     @Transactional
-    public SampleDTO create(SampleDTO dto) {
+    public SampleResponse create(SampleRequest request) {
+        Customer customer = customerRepository.findById(request.customerId())
+                .orElseThrow(() -> new EntityNotFoundException("Customer not found"));
+
         Sample sample = new Sample();
-        sample.setBarcode(dto.getBarcode());
-        sample.setMaterialType(dto.getMaterialType());
-        sample.setStatus(dto.getStatus() != null ? dto.getStatus() : "RECEIVED");
+        sample.setBarcode(request.barcode());
+        sample.setDescription(request.description());
+        sample.setMaterialType(request.materialType());
+        sample.setCustomer(customer);
+        sample.setStatus("RECEIVED");
 
-        Sample savedSample = sampleRepository.save(sample);
-        log.info("New sample created with barcode: {}", savedSample.getBarcode());
-        return SampleDTO.fromEntity(savedSample);
-    }
-
-    public SampleDTO findById(Long id) {
-        return sampleRepository.findById(id)
-                .map(SampleDTO::fromEntity)
-                .orElseThrow(() -> new EntityNotFoundException(SAMPLE_NOT_FOUND + " with id: " + id));
+        return mapToResponse(sampleRepository.save(sample));
     }
 
     @Transactional
-    public SampleDTO updateStatus(Long id, String status) {
+    public SampleResponse updateStatus(Long id, String status) {
         Sample sample = sampleRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException(SAMPLE_NOT_FOUND));
+                .orElseThrow(() -> new EntityNotFoundException("Sample not found"));
         sample.setStatus(status);
-        Sample updatedSample = sampleRepository.save(sample);
-        return SampleDTO.fromEntity(updatedSample);
+        return mapToResponse(sampleRepository.save(sample));
     }
 
-    public List<AuditLogDTO> getHistory(Long id) {
-        AuditReader auditReader = AuditReaderFactory.get(entityManager);
-
-        @SuppressWarnings("unchecked")
-        List<Object[]> rawRevisions = auditReader.createQuery()
-                .forRevisionsOfEntity(Sample.class, false, true)
-                .add(org.hibernate.envers.query.AuditEntity.id().eq(id))
-                .getResultList();
-
-        return rawRevisions.stream().map(result -> {
-            Sample entity = (Sample) result[0];
-            com.kruzvinicius.limsbackend.model.Revision rev = (com.kruzvinicius.limsbackend.model.Revision) result[1];
-            org.hibernate.envers.RevisionType revisionType = (org.hibernate.envers.RevisionType) result[2];
-
-            return new AuditLogDTO(
-                    rev.getId(),
-                    rev.getModifiedBy(),
-                    rev.getTimestamp().toString(),
-                    revisionType.name(),
-                    entity.getStatus()
-            );
-        }).toList();
+    @Transactional(readOnly = true)
+    public List<TestResultDTO> getResults(Long id) {
+        if (!sampleRepository.existsById(id)) throw new EntityNotFoundException("Sample not found");
+        return testResultRepository.findBySampleId(id).stream()
+                .map(res -> new TestResultDTO(
+                        res.getId(),
+                        res.getParameterName(),
+                        res.getResultValue(),
+                        res.getUnit(),
+                        res.getPerformedAt() != null ? res.getPerformedAt().toString() : "Pending"
+                ))
+                .toList();
     }
 
     @Transactional
     public TestResultDTO addResult(Long id, TestResultDTO dto) {
         Sample sample = sampleRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException(SAMPLE_NOT_FOUND));
+                .orElseThrow(() -> new EntityNotFoundException("Sample not found"));
 
         TestResult result = new TestResult();
-        result.setParameterName(dto.getParameterName());
-        result.setResultValue(dto.getResultValue());
-        result.setUnit(dto.getUnit());
+        result.setParameterName(dto.parameterName());
+        result.setResultValue(dto.resultValue());
+        result.setUnit(dto.unit());
         result.setSample(sample);
 
-        TestResult savedResult = testResultRepository.save(result);
+        TestResult saved = testResultRepository.save(result);
+        return new TestResultDTO(saved.getId(), saved.getParameterName(),
+                saved.getResultValue(), saved.getUnit(), "Recorded");
+    }
 
-        return new TestResultDTO(
-                savedResult.getId(),
-                savedResult.getParameterName(),
-                savedResult.getResultValue(),
-                savedResult.getUnit(),
-                savedResult.getPerformedAt() != null ? savedResult.getPerformedAt().toString() : "Not recorded"
+    @Transactional(readOnly = true)
+    @SuppressWarnings("unchecked")
+    public List<AuditLogDTO> getHistory(Long id) {
+        AuditReader auditReader = AuditReaderFactory.get(entityManager);
+        List<Object[]> rawRevisions = auditReader.createQuery()
+                .forRevisionsOfEntity(Sample.class, false, true)
+                .add(AuditEntity.id().eq(id))
+                .getResultList();
+
+        return rawRevisions.stream().map(result -> {
+            Sample entity = (Sample) result[0];
+            Revision rev = (Revision) result[1];
+            return new AuditLogDTO(
+                    rev.getId(),
+                    rev.getModifiedBy(),
+                    rev.getTimestamp().toString(),
+                    "MODIFIED",
+                    entity.getStatus()
+            );
+        }).toList();
+    }
+
+    /**
+     * Mapper: Converts Entity to Response DTO with Date conversion
+     */
+    private SampleResponse mapToResponse(Sample sample) {
+        return new SampleResponse(
+                sample.getId(),
+                sample.getDescription(),
+                sample.getBarcode(),
+                sample.getMaterialType(),
+                sample.getStatus(),
+                sample.getCustomer().getId(),
+                sample.getReceivedAt()
         );
-    }
-
-    public List<TestResultDTO> getResults(Long id) {
-        if (!sampleRepository.existsById(id)) {
-            throw new EntityNotFoundException(SAMPLE_NOT_FOUND);
-        }
-        return testResultRepository.findBySampleId(id).stream()
-                .map(result -> new TestResultDTO(
-                        result.getId(),
-                        result.getParameterName(),
-                        result.getResultValue(),
-                        result.getUnit(),
-                        result.getPerformedAt() != null ? result.getPerformedAt().toString() : "Not recorded"
-                )).toList();
-    }
-
-    public Optional<SampleDTO> findByBarcode(String barcode) {
-        return sampleRepository.findByBarcode(barcode).map(SampleDTO::fromEntity);
     }
 }

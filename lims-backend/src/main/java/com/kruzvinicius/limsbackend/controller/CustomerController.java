@@ -1,9 +1,12 @@
 package com.kruzvinicius.limsbackend.controller;
 
-import com.kruzvinicius.limsbackend.model.Customer;
-import com.kruzvinicius.limsbackend.repository.CustomerRepository;
+import com.kruzvinicius.limsbackend.dto.CustomerRequest;
+import com.kruzvinicius.limsbackend.dto.CustomerResponse;
+import com.kruzvinicius.limsbackend.service.CustomerService;
+import jakarta.validation.Valid;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
 
@@ -11,15 +14,20 @@ import java.util.List;
 @RequestMapping("/api/customers")
 public class CustomerController {
 
-    @Autowired
-    private CustomerRepository repository;
+    private final CustomerService customerService;
+
+    public CustomerController(CustomerService customerService) {
+        this.customerService = customerService;
+    }
 
     @GetMapping
-    public List<Customer> getAllCustomers() {
-        return repository.findAll();
+    public ResponseEntity<List<CustomerResponse>> getAllCustomers() {
+        return ResponseEntity.ok(customerService.findAll());
     }
+
     @PostMapping
-    public Customer createCustomer(@RequestBody Customer customer) {
-        return repository.save(customer);
+    public ResponseEntity<CustomerResponse> createCustomer(@RequestBody @Valid CustomerRequest request) {
+        var response = customerService.save(request);
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 }

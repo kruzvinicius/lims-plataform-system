@@ -1,14 +1,13 @@
 package com.kruzvinicius.limsbackend.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-
-@Data
-@AllArgsConstructor
-public class TestResultDTO {
-    private Long id;
-    private String parameterName;
-    private String resultValue;
-    private String unit;
-    private String performedAt;
-}
+/**
+ * Using Record for consistency with SampleRequest and SampleResponse.
+ * Automatically generates immutable fields and accessor methods.
+ */
+public record TestResultDTO(
+        Long id,
+        String parameterName,
+        String resultValue,
+        String unit,
+        String performedAt
+) {}

@@ -1,19 +1,13 @@
 package com.kruzvinicius.limsbackend.model;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.envers.Audited;
 
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
 
 @Entity
 @Audited
@@ -21,26 +15,29 @@ import java.time.LocalDateTime;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-
 public class Sample {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    // ADD THIS FIELD TO FIX THE SERVICE ERRORS
+    @Column(nullable = false)
+    private String description;
+
     @Column(unique = true, nullable = false)
-    private String barcode; // unique sample barcode
+    private String barcode;
 
     @Column(name = "material_type")
-    private String materialType; // Ex.: Water, Blood, Soil
+    private String materialType; // e.g., Water, Blood, Soil
 
-    private String status = "Received"; // Ex.: Received, Shipped, Delivered
+    @Column(nullable = false)
+    private String status = "RECEIVED";
 
     @Column(name = "received_at")
-    private LocalDateTime receivedAt = LocalDateTime.now(); // Date and time when the sample was received
+    private OffsetDateTime receivedAt = OffsetDateTime.now(ZoneOffset.UTC);
 
     @ManyToOne
     @JoinColumn(name = "customer_id", nullable = false)
     private Customer customer;
-
 }

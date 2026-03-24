@@ -1,51 +1,97 @@
--- 1. Customers
+-- ==========================================================
+-- 1. DOMAIN TABLES (CORE BUSINESS ENTITIES)
+-- ==========================================================
+
 CREATE TABLE customers
 (
     id               BIGSERIAL PRIMARY KEY,
-    corporate_reason VARCHAR(100) NOT NULL,
-    email            VARCHAR(100),
-    phone            VARCHAR(100),
-    tax_id           VARCHAR(100)
+    corporate_reason VARCHAR(255) NOT NULL,
+    email            VARCHAR(255) NOT NULL UNIQUE,
+    tax_id           VARCHAR(50)  NOT NULL UNIQUE,
+    phone            VARCHAR(20),
+    created_at       TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
 
--- 2. Samples
 CREATE TABLE samples
 (
     id            BIGSERIAL PRIMARY KEY,
+    description   VARCHAR(255)        NOT NULL,
     barcode       VARCHAR(100) UNIQUE NOT NULL,
     material_type VARCHAR(100),
-    status        VARCHAR(20) DEFAULT 'Received',
-    received_at   TIMESTAMP   DEFAULT CURRENT_TIMESTAMP,
-    customer_id   BIGINT REFERENCES customers (id)
+    status        VARCHAR(50)         NOT NULL DEFAULT 'RECEIVED',
+    customer_id   BIGINT              NOT NULL,
+    received_at   TIMESTAMP WITH TIME ZONE     DEFAULT CURRENT_TIMESTAMP,
+
+    CONSTRAINT fk_sample_customer
+        FOREIGN KEY (customer_id) REFERENCES customers (id)
+            ON DELETE RESTRICT
 );
 
--- 3. Test Results
 CREATE TABLE tests_results
 (
     id             BIGSERIAL PRIMARY KEY,
-    parameter_name VARCHAR(100),
+    parameter_name VARCHAR(100) NOT NULL,
+    result_value   VARCHAR(255),
     display_value  VARCHAR(100),
     numeric_value  DECIMAL(12, 4),
-    uom            VARCHAR(10),
-    sample_id      BIGINT REFERENCES samples (id)
+    unit           VARCHAR(20),
+    sample_id      BIGINT       NOT NULL,
+    performed_at   TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+
+    CONSTRAINT fk_test_sample
+        FOREIGN KEY (sample_id) REFERENCES samples (id)
+            ON DELETE CASCADE
 );
 
--- 4. Audit Tables
-CREATE TABLE revinfo
+-- ==========================================================
+-- 2. AUDIT TABLES (HIBERNATE ENVERS INFRASTRUCTURE)
+-- ==========================================================
+
+CREATE TABLE revisions
 (
-    rev_id      SERIAL PRIMARY KEY,
-    revtstmp    BIGINT,
+    id          BIGSERIAL PRIMARY KEY,
+    timestamp   TIMESTAMP WITH TIME ZONE NOT NULL,
     modified_by VARCHAR(255)
+);
+
+CREATE TABLE customers_aud
+(
+    id               BIGINT NOT NULL,
+    rev              BIGINT NOT NULL,
+    revtype          SMALLINT,
+    corporate_reason VARCHAR(255),
+    email            VARCHAR(255),
+    tax_id           VARCHAR(50),
+    phone            VARCHAR(20),
+    PRIMARY KEY (id, rev),
+    CONSTRAINT fk_customers_aud_revisions FOREIGN KEY (rev) REFERENCES revisions (id)
 );
 
 CREATE TABLE samples_aud
 (
-    id            BIGINT  NOT NULL,
-    rev_id        INTEGER NOT NULL,
+    id            BIGINT NOT NULL,
+    rev           BIGINT NOT NULL,
     revtype       SMALLINT,
+    description   VARCHAR(255),
     barcode       VARCHAR(100),
     material_type VARCHAR(100),
-    status        VARCHAR(20),
-    PRIMARY KEY (id, rev_id),
-    CONSTRAINT fk_samples_aud_revinfo FOREIGN KEY (rev_id) REFERENCES revinfo (rev_id)
+    status        VARCHAR(50),
+    customer_id   BIGINT,
+    received_at   TIMESTAMP WITH TIME ZONE,
+    PRIMARY KEY (id, rev),
+    CONSTRAINT fk_samples_aud_revisions FOREIGN KEY (rev) REFERENCES revisions (id)
+);
+
+CREATE TABLE tests_results_aud
+(
+    id             BIGINT NOT NULL,
+    rev            BIGINT NOT NULL,
+    revtype        SMALLINT,
+    parameter_name VARCHAR(100),
+    result_value   VARCHAR(255),
+    unit           VARCHAR(20),
+    sample_id      BIGINT,
+    performed_at   TIMESTAMP WITH TIME ZONE,
+    PRIMARY KEY (id, rev),
+    CONSTRAINT fk_tests_results_aud_revisions FOREIGN KEY (rev) REFERENCES revisions (id)
 );

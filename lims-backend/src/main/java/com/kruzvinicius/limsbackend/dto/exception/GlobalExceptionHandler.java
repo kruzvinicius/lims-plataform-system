@@ -67,6 +67,20 @@ public class GlobalExceptionHandler {
     }
 
     /**
+     * 409 - CONFLICT (IllegalStateException — invalid state transitions)
+     */
+    @ExceptionHandler(IllegalStateException.class)
+    public ResponseEntity<ErrorDetails> handleIllegalStateException(IllegalStateException ex, WebRequest request) {
+        ErrorDetails error = new ErrorDetails(
+                LocalDateTime.now(),
+                ex.getMessage(),
+                request.getDescription(false),
+                "INVALID_STATE_TRANSITION"
+        );
+        return new ResponseEntity<>(error, HttpStatus.CONFLICT);
+    }
+
+    /**
      * 500 - INTERNAL SERVER ERROR (Fallback)
      */
     @ExceptionHandler(Exception.class)

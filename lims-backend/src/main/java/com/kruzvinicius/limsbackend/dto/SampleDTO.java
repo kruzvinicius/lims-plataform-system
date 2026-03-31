@@ -27,7 +27,7 @@ public class SampleDTO {
                 sample.getId(),
                 sample.getBarcode(),
                 sample.getMaterialType(),
-                sample.getStatus(),
+                sample.getStatus() != null ? sample.getStatus().name() : null,
                 sample.getCustomer() != null ? sample.getCustomer().getCorporateReason() : "N/A",
                 sample.getReceivedAt() != null ? sample.getReceivedAt().toString() : "not Registered"
         );

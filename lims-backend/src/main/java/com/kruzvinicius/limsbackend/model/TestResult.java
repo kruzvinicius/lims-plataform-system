@@ -1,5 +1,6 @@
 package com.kruzvinicius.limsbackend.model;
 
+import com.kruzvinicius.limsbackend.model.enums.TestResultStatus;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -11,11 +12,11 @@ import java.time.ZoneOffset;
 
 /**
  * Entity representing an analytical result for a specific sample.
- * Audited to track any changes in the values provided by the lab.
+ * Follows an approval flow: PENDING → APPROVED / REJECTED.
  */
 @Entity
 @Audited
-@Table(name = "tests_results") // Matches SQL 'tests_results'
+@Table(name = "tests_results")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -26,18 +27,36 @@ public class TestResult {
     private Long id;
 
     @Column(name = "parameter_name", nullable = false)
-    private String parameterName; // e.g., "pH", "Glucose", "Lead Content"
+    private String parameterName;
 
     @Column(name = "result_value", nullable = false)
-    private String resultValue; // String allows values like "< 0.5", "Positive", or "10.5"
+    private String resultValue;
 
     @Column(nullable = false)
-    private String unit; // e.g., "mg/L", "mg/kg", "ppm"
+    private String unit;
 
     @Column(name = "performed_at")
     private OffsetDateTime performedAt = OffsetDateTime.now(ZoneOffset.UTC);
 
+    /** Approval status of this result. */
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private TestResultStatus status = TestResultStatus.PENDING;
+
+    /** Supervisor who approved or rejected this result. */
+    @ManyToOne
+    @JoinColumn(name = "approved_by")
+    private User approvedBy;
+
+    /** Timestamp of the approval/rejection decision. */
+    @Column(name = "approved_at")
+    private OffsetDateTime approvedAt;
+
+    /** Reason provided when rejecting the result. */
+    @Column(name = "rejection_reason", columnDefinition = "TEXT")
+    private String rejectionReason;
+
     @ManyToOne
     @JoinColumn(name = "sample_id", nullable = false)
-    private Sample sample; // Every result must belong to a specific sample
+    private Sample sample;
 }

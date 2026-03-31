@@ -1,19 +1,7 @@
 package com.kruzvinicius.limsbackend.config;
 
-import io.swagger.v3.oas.models.OpenAPI;
-import io.swagger.v3.oas.models.info.Info;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-
-@Configuration
+// This duplicate config was disabled to allow OpenApiConfig (which has JWT support) to run.
+// @Configuration
 public class OpenAPIConfig {
 
-    @Bean
-    public OpenAPI customOpenAPI() {
-        return new OpenAPI()
-                .info(new Info()
-                        .title("LIMS Backend API")
-                        .version("1.0")
-                        .description("Laboratory Information Management System (LIMS) Platform "));
-    }
 }

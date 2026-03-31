@@ -1,49 +1,30 @@
-lims-backend/HELP.md
+# Maven / Build
 target/
 .mvn/wrapper/maven-wrapper.jar
-!**/src/main/**/target/
-!**/src/test/**/target/
 
-/target/
-!.mvn/wrapper/maven-wrapper.jar
-/logs/
-.idea/
-*.class
-*.iml
+# Logs
+logs/
 *.log
+
+# IDEs
+.idea/
+*.iml
+.vscode/
+
+# OS
 .DS_Store
 
 # Database
 lims-database/postgres-data/
 
-### STS ###
-.apt_generated
-.classpath
-.factorypath
-.project
-.settings
-.springBeans
-.sts4-cache
-
-### IntelliJ IDEA ###
-.idea
-*.iws
-*.iml
-*.ipr
-
-### NetBeans ###
-/nbproject/private/
-/nbbuild/
-/dist/
-/nbdist/
-/.nb-gradle/
-build/
-!**/src/main/**/build/
-!**/src/test/**/build/
-
-### VS Code ###
-.vscode/
-
-# ignore env
+# Env files (IMPORTANT)
 .env
+.env.*
 **/.env
+
+# Local config (IMPORTANT)
+application-dev.properties
+application-local.properties
+
+# Java
+*.class

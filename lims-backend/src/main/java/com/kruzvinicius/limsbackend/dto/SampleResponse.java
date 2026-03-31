@@ -7,7 +7,11 @@ public record SampleResponse(
         String description,
         String barcode,
         String materialType,
+        String collectionLocation,
+        java.time.LocalDate collectionDate,
+        String notes,
         String status,
+        String rejectionReason,
         Long customerId,
         OffsetDateTime receivedAt) {
 }

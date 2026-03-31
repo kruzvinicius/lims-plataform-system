@@ -1,4 +1,4 @@
 package com.kruzvinicius.limsbackend.dto;
 
-public record AuthResponse() {
+public record AuthResponse(String token) {
 }

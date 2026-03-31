@@ -1,0 +1,17 @@
+$kind: http-request
+name: http://localhost:8080/api/customers
+url: http://localhost:8080/api/customers
+method: GET
+body:
+  type: json
+  content: |-
+    {
+      "username": "vinicius",
+      "password": "123",
+      "role": "ADMIN"
+    }
+auth:
+  type: bearer
+  credentials:
+    token: "{{jwt_token}}"
+order: 393904199942533

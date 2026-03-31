@@ -1,0 +1,5 @@
+name: Lims-local
+values:
+  - key: jwt_token
+    value: ''
+    enabled: true

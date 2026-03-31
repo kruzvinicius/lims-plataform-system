@@ -1,0 +1,23 @@
+$kind: http-request
+name: http://localhost:8080/api/auth/login
+url: http://localhost:8080/api/auth/login
+method: POST
+body:
+  type: json
+  content: |-
+    {
+      "username": "operador",
+      "password": "123"
+    }
+scripts:
+  - type: afterResponse
+    code: |-
+      if (pm.response && pm.response.code === 200) {
+          var jsonData = pm.response.json();
+          pm.environment.set("jwt_token", jsonData.token);
+          console.log("Token guardado com sucesso!");
+      } else {
+          console.log("Opa! O servidor não respondeu com sucesso.");
+      }
+    language: text/javascript
+order: 1774881457221

@@ -1,4 +1,4 @@
-# EcoLab LIMS (Laboratory Information Management System) 🔬🌱
+# Lab LIMS (Laboratory Information Management System) 🔬🌱
 
 ![Java](https://img.shields.io/badge/Java-21-orange.svg) 
 ![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.4.3-brightgreen.svg) 

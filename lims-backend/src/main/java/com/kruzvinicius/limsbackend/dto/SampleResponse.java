@@ -13,5 +13,7 @@ public record SampleResponse(
         String status,
         String rejectionReason,
         Long customerId,
-        OffsetDateTime receivedAt) {
+        OffsetDateTime receivedAt,
+        Long legislationId,
+        String legislationName) {
 }

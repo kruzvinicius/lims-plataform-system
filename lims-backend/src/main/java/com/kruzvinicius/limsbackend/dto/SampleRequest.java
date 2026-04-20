@@ -25,5 +25,9 @@ public record SampleRequest(
         String notes,
 
         @NotNull(message = "Customer ID is required")
-        Long customerId
+        Long customerId,
+
+        /** Optional: ID of the environmental legislation applicable to this sample. */
+        Long legislationId
 ) {}
+

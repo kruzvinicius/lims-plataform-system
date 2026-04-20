@@ -10,8 +10,9 @@ import org.hibernate.envers.Audited;
 import java.math.BigDecimal;
 
 /**
- * Defines a type of laboratory analysis/test with acceptance ranges.
- * Used for automatic validation of results against min/max limits.
+ * Defines a type of laboratory analysis/test.
+ * Acceptance limits (VMP) belong to the applicable legislation, not to the parameter.
+ * The parameter carries its measurement uncertainty (u), which is method-specific.
  */
 @Entity
 @Audited
@@ -41,13 +42,16 @@ public class AnalysisType {
     @Column(name = "default_unit", length = 30)
     private String defaultUnit;
 
-    /** Minimum acceptable value. Result below this triggers OUT_OF_RANGE warning. */
-    @Column(name = "min_value", precision = 12, scale = 4)
-    private BigDecimal minValue;
+    /**
+     * Expanded measurement uncertainty of the analytical method (e.g., 0.05 means ±0.05 in default unit).
+     * This is an intrinsic property of the method, not a legal limit.
+     */
+    @Column(name = "uncertainty_value", precision = 12, scale = 6)
+    private BigDecimal uncertaintyValue;
 
-    /** Maximum acceptable value. Result above this triggers OUT_OF_RANGE warning. */
-    @Column(name = "max_value", precision = 12, scale = 4)
-    private BigDecimal maxValue;
+    /** Default commercial price for proposals. */
+    @Column(name = "default_price", precision = 12, scale = 2)
+    private BigDecimal defaultPrice;
 
     /** Whether this analysis type is currently active and available for use. */
     @Builder.Default

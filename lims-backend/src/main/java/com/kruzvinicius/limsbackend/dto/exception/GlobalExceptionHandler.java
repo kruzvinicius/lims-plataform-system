@@ -88,7 +88,7 @@ public class GlobalExceptionHandler {
         log.error("A critical unexpected error occurred: ", ex);
         ErrorDetails error = new ErrorDetails(
                 LocalDateTime.now(),
-                "An unexpected internal server error occurred.",
+                "Debug -> " + ex.getMessage() + " [" + ex.getClass().getSimpleName() + "]",
                 request.getDescription(false),
                 "INTERNAL_SERVER_ERROR"
         );

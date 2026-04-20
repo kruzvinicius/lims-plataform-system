@@ -26,6 +26,15 @@ public class TestResultController {
     private final TestResultService testResultService;
     private final AuditService auditService;
 
+    @PutMapping("/{id}")
+    @PreAuthorize("hasAnyRole('ADMIN','MANAGER','ANALYST')")
+    public ResponseEntity<TestResultDTO> updateResultValue(
+            @PathVariable Long id,
+            @RequestBody String resultValue) {
+        log.info("REST request to update Test Result value : {}", id);
+        return ResponseEntity.ok(testResultService.updateResultValue(id, resultValue));
+    }
+
     @PatchMapping("/{id}/approve")
     @PreAuthorize("hasAnyRole('ADMIN','MANAGER')")
     public ResponseEntity<TestResultDTO> approveResult(

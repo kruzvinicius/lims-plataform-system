@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.envers.Audited;
+import org.hibernate.envers.RelationTargetAuditMode;
 
 import java.time.LocalDate;
 import java.time.OffsetDateTime;
@@ -65,6 +66,13 @@ public class Sample {
     @ManyToOne
     @JoinColumn(name = "service_order_id")
     private ServiceOrder serviceOrder;
+
+    /** Environmental legislation applicable to this sample's collection point (optional). */
+    @Audited(targetAuditMode = RelationTargetAuditMode.NOT_AUDITED)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "legislation_id")
+    private EnvironmentalLegislation legislation;
+
 
     @OneToMany(mappedBy = "sample", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<CustodyEvent> custodyEvents = new ArrayList<>();

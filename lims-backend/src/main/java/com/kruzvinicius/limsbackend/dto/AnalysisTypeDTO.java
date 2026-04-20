@@ -16,8 +16,11 @@ public record AnalysisTypeDTO(
         String description,
         String defaultUnit,
 
-        BigDecimal minValue,
-        BigDecimal maxValue,
+        /** Expanded measurement uncertainty (±) of the analytical method. */
+        BigDecimal uncertaintyValue,
+
+        BigDecimal defaultPrice,
 
         Boolean active
 ) {}
+

@@ -28,6 +28,18 @@ public class TestResultService {
     private final TestResultRepository testResultRepository;
     private final UserRepository userRepository;
 
+    @Transactional
+    public TestResultDTO updateResultValue(Long resultId, String resultValue) {
+        TestResult result = loadResult(resultId);
+        validatePending(result);
+
+        result.setResultValue(resultValue);
+        result.setPerformedAt(OffsetDateTime.now(ZoneOffset.UTC));
+
+        log.info("Test result {} value updated to {}", resultId, resultValue);
+        return mapToDTO(testResultRepository.save(result));
+    }
+
     /**
      * Approve an individual test result.
      * Moves result from PENDING → APPROVED.

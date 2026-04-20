@@ -35,7 +35,7 @@ class AnalysisTypeServiceTest {
         });
 
         AnalysisTypeDTO dto = new AnalysisTypeDTO(null, "ph", "pH", "pH measure",
-                "pH units", new BigDecimal("6.5"), new BigDecimal("8.5"), true);
+                "pH units", new BigDecimal("6.5"), new BigDecimal("8.5"), new BigDecimal("25.00"), true);
 
         AnalysisTypeDTO result = service.create(dto);
         assertThat(result.code()).isEqualTo("PH");
@@ -52,7 +52,7 @@ class AnalysisTypeServiceTest {
         when(repository.save(any())).thenAnswer(inv -> inv.getArgument(0));
 
         AnalysisTypeDTO dto = new AnalysisTypeDTO(null, "PH", "pH Atualizado", null,
-                null, new BigDecimal("6.0"), new BigDecimal("9.0"), true);
+                null, new BigDecimal("6.0"), new BigDecimal("9.0"), null, true);
 
         AnalysisTypeDTO result = service.update(1L, dto);
         assertThat(result.name()).isEqualTo("pH Atualizado");

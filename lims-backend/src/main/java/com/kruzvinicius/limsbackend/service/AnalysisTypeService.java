@@ -26,8 +26,8 @@ public class AnalysisTypeService {
                 .name(dto.name())
                 .description(dto.description())
                 .defaultUnit(dto.defaultUnit())
-                .minValue(dto.minValue())
-                .maxValue(dto.maxValue())
+                .uncertaintyValue(dto.uncertaintyValue())
+                .defaultPrice(dto.defaultPrice())
                 .active(dto.active() != null ? dto.active() : true)
                 .build();
         return mapToDTO(repository.save(type));
@@ -40,8 +40,8 @@ public class AnalysisTypeService {
         type.setName(dto.name());
         type.setDescription(dto.description());
         type.setDefaultUnit(dto.defaultUnit());
-        type.setMinValue(dto.minValue());
-        type.setMaxValue(dto.maxValue());
+        type.setUncertaintyValue(dto.uncertaintyValue());
+        type.setDefaultPrice(dto.defaultPrice());
         if (dto.active() != null) type.setActive(dto.active());
         return mapToDTO(repository.save(type));
     }
@@ -61,6 +61,12 @@ public class AnalysisTypeService {
         return repository.findByActiveTrue().stream().map(this::mapToDTO).toList();
     }
 
+    @Transactional
+    public void delete(Long id) {
+        AnalysisType type = loadById(id);
+        repository.delete(type);
+    }
+
     private AnalysisType loadById(Long id) {
         return repository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Analysis Type not found: " + id));
@@ -69,7 +75,7 @@ public class AnalysisTypeService {
     private AnalysisTypeDTO mapToDTO(AnalysisType t) {
         return new AnalysisTypeDTO(
                 t.getId(), t.getCode(), t.getName(), t.getDescription(),
-                t.getDefaultUnit(), t.getMinValue(), t.getMaxValue(), t.isActive()
+                t.getDefaultUnit(), t.getUncertaintyValue(), t.getDefaultPrice(), t.isActive()
         );
     }
 }

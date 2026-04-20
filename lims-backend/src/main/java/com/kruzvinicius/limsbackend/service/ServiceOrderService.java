@@ -154,7 +154,8 @@ public class ServiceOrderService {
 
     private String generateOrderNumber() {
         Long maxId = soRepository.findMaxId();
-        return String.format("OS-%d-%04d", Year.now().getValue(), maxId + 1);
+        long nextId = (maxId != null) ? maxId + 1 : 1L;
+        return String.format("OS-%d-%04d", Year.now().getValue(), nextId);
     }
 
     private void validateTransition(ServiceOrderStatus from, ServiceOrderStatus to) {

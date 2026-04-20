@@ -47,6 +47,7 @@ public class SampleService {
     private final TestResultRepository testResultRepository;
     private final UserRepository userRepository;
     private final ReanalysisRequestRepository reanalysisRequestRepository;
+    private final LegislationRepository legislationRepository;
     private final EntityManager entityManager;
 
     // ── READ ─────────────────────────────────────────────────────────────────
@@ -91,6 +92,11 @@ public class SampleService {
         sample.setNotes(request.notes());
         sample.setCustomer(customer);
         sample.setStatus(SampleStatus.RECEIVED);
+
+        if (request.legislationId() != null) {
+            legislationRepository.findById(request.legislationId())
+                    .ifPresent(sample::setLegislation);
+        }
 
         return mapToResponse(sampleRepository.save(sample));
     }
@@ -272,7 +278,9 @@ public class SampleService {
                 sample.getStatus() != null ? sample.getStatus().name() : null,
                 sample.getRejectionReason(),
                 sample.getCustomer().getId(),
-                sample.getReceivedAt()
+                sample.getReceivedAt(),
+                sample.getLegislation() != null ? sample.getLegislation().getId() : null,
+                sample.getLegislation() != null ? sample.getLegislation().getName() : null
         );
     }
 

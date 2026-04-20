@@ -60,4 +60,13 @@ public class AnalysisTypeController {
     public ResponseEntity<AnalysisTypeDTO> getById(@PathVariable Long id) {
         return ResponseEntity.ok(service.findById(id));
     }
+
+    /** DELETE /api/analysis-types/{id} — remove an analysis type */
+    @DeleteMapping("/{id}")
+    @PreAuthorize("hasAnyRole('ADMIN','MANAGER')")
+    public ResponseEntity<Void> delete(@PathVariable Long id) {
+        log.info("REST request to delete AnalysisType: {}", id);
+        service.delete(id);
+        return ResponseEntity.noContent().build();
+    }
 }

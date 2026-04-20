@@ -1,0 +1,197 @@
+/* ============================================================
+   Login — Environmental Gradient + Glassmorphism Card
+   ============================================================ */
+
+.loginContainer {
+  display: flex;
+  min-height: 100dvh;
+  align-items: center;
+  justify-content: center;
+  background-color: #022C22;
+  background-image:
+    radial-gradient(ellipse at 20% 50%, rgba(13, 148, 136, 0.25), transparent 50%),
+    radial-gradient(ellipse at 80% 20%, rgba(5, 150, 105, 0.15), transparent 50%),
+    radial-gradient(ellipse at 50% 80%, rgba(16, 185, 129, 0.1), transparent 50%);
+  font-family: var(--font-primary);
+}
+
+.loginCard {
+  background: rgba(255, 255, 255, 0.06);
+  backdrop-filter: blur(24px) saturate(1.5);
+  -webkit-backdrop-filter: blur(24px) saturate(1.5);
+  border-radius: var(--radius-xl);
+  box-shadow: 0 32px 64px rgba(0, 0, 0, 0.4);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  width: 100%;
+  max-width: 440px;
+  padding: 3rem;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  z-index: 10;
+  animation: cardReveal 0.6s var(--ease-spring) both;
+}
+
+@keyframes cardReveal {
+  from {
+    opacity: 0;
+    transform: translateY(24px) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* — Header — */
+.header {
+  text-align: center;
+}
+
+.iconWrapper {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 64px;
+  height: 64px;
+  background: linear-gradient(135deg, rgba(13, 148, 136, 0.3), rgba(5, 150, 105, 0.2));
+  color: #2DD4BF;
+  border-radius: var(--radius-lg);
+  margin-bottom: 1.25rem;
+  box-shadow: 0 8px 24px rgba(13, 148, 136, 0.2);
+}
+
+.title {
+  margin: 0;
+  font-size: 1.75rem;
+  font-weight: 800;
+  color: #F4F4F5;
+  letter-spacing: -0.03em;
+}
+
+.subtitle {
+  margin: 0.5rem 0 0;
+  color: #A1A1AA;
+  font-size: 0.95rem;
+}
+
+/* — Form — */
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.inputGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.label {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #D4D4D8;
+}
+
+.inputWrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.inputIcon {
+  position: absolute;
+  left: 1rem;
+  color: #71717A;
+  transition: color 0.2s;
+}
+
+.input {
+  width: 100%;
+  padding: 0.875rem 1rem 0.875rem 3rem;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: var(--radius-md);
+  background: rgba(255, 255, 255, 0.05);
+  color: #F4F4F5;
+  font-size: 1rem;
+  font-family: inherit;
+  transition: all 0.2s var(--ease-smooth);
+  box-sizing: border-box;
+}
+
+.input::placeholder {
+  color: #52525B;
+}
+
+.input:focus {
+  outline: none;
+  border-color: #0D9488;
+  box-shadow: 0 0 0 4px rgba(13, 148, 136, 0.2);
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.input:focus ~ .inputIcon,
+.inputWrapper:focus-within .inputIcon {
+  color: #2DD4BF;
+}
+
+/* — Error — */
+.errorBox {
+  padding: 0.875rem;
+  background: rgba(239, 68, 68, 0.12);
+  border-left: 3px solid #EF4444;
+  color: #FCA5A5;
+  font-size: 0.875rem;
+  border-radius: var(--radius-sm);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-weight: 500;
+}
+
+/* — Submit — */
+.submitBtn {
+  margin-top: 0.75rem;
+  padding: 1rem;
+  background: linear-gradient(135deg, #0D9488 0%, #059669 100%);
+  color: #FFFFFF;
+  border: none;
+  border-radius: var(--radius-md);
+  font-size: 1rem;
+  font-weight: 700;
+  font-family: inherit;
+  cursor: pointer;
+  transition: all 0.25s var(--ease-smooth);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  box-shadow: 0 4px 16px rgba(13, 148, 136, 0.3);
+}
+
+.submitBtn:hover:not(.loading) {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(13, 148, 136, 0.4);
+}
+
+.submitBtn:active:not(.loading) {
+  transform: translateY(0);
+}
+
+.submitBtn.loading {
+  opacity: 0.75;
+  cursor: not-allowed;
+}
+
+.spinner {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  100% { transform: rotate(360deg); }
+}
+
+/* — Light mode override (login stays dark by design) — */
+/* Login page intentionally uses a dark environmental aesthetic
+   regardless of system preference for visual impact */

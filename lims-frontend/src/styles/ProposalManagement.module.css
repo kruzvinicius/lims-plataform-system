@@ -1,0 +1,194 @@
+/* ============================================================
+   Proposal Management — EcoLab Premium Design
+   ============================================================ */
+
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  padding: 2rem;
+  background-color: var(--bg);
+  min-height: 100dvh;
+  color: var(--text);
+  animation: fadeSlideIn 0.4s var(--ease-spring) both;
+}
+
+/* — Header — */
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: var(--surface);
+  padding: 1.75rem 2rem;
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-md);
+  border: 1px solid var(--border);
+}
+
+.headerLeft h1 {
+  font-size: 1.5rem;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  margin: 0 0 0.25rem 0;
+  color: var(--text-heading);
+}
+
+.headerLeft p {
+  color: var(--text-muted);
+  font-size: 0.875rem;
+  margin: 0;
+}
+
+.newBtn {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.5rem;
+  background: linear-gradient(135deg, var(--accent) 0%, var(--accent-secondary) 100%);
+  color: #fff;
+  border: none;
+  border-radius: var(--radius-pill);
+  font-size: 0.875rem;
+  font-weight: 700;
+  font-family: inherit;
+  cursor: pointer;
+  box-shadow: 0 4px 16px rgba(13, 148, 136, 0.3);
+  transition: all 0.25s var(--ease-smooth);
+}
+
+.newBtn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(13, 148, 136, 0.4);
+}
+
+/* — Table — */
+.tableWrapper {
+  background: var(--surface);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-md);
+  border: 1px solid var(--border);
+  overflow-x: auto;
+}
+
+.dataTable {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+}
+
+.dataTable th {
+  background: var(--surface-elevated);
+  padding: 1rem 1.25rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  letter-spacing: 0.06em;
+  border-bottom: 2px solid var(--border);
+}
+
+.dataTable td {
+  padding: 1rem 1.25rem;
+  font-size: 0.875rem;
+  border-bottom: 1px solid var(--border);
+  vertical-align: middle;
+}
+
+.dataTable tbody tr {
+  transition: background-color 0.15s;
+}
+
+.dataTable tbody tr:hover {
+  background-color: var(--accent-glow);
+}
+
+.fw500 {
+  font-weight: 500;
+}
+
+.fw600 {
+  font-weight: 600;
+}
+
+/* — Status Badges — */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.25rem 0.75rem;
+  border-radius: var(--radius-pill);
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.badgeDraft {
+  background: var(--surface-elevated);
+  color: var(--text-muted);
+}
+
+.badgeSent {
+  background: var(--accent-glow);
+  color: var(--accent);
+}
+
+.badgeApproved {
+  background: rgba(16, 185, 129, 0.12);
+  color: var(--accent-secondary);
+}
+
+.badgeDeclined {
+  background: rgba(239, 68, 68, 0.1);
+  color: #991B1B;
+}
+
+/* — Action Button — */
+.actionBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.4rem 0.85rem;
+  background: linear-gradient(135deg, var(--accent-secondary) 0%, #10B981 100%);
+  color: white;
+  border: none;
+  border-radius: var(--radius-sm);
+  font-size: 0.75rem;
+  font-weight: 700;
+  font-family: inherit;
+  cursor: pointer;
+  transition: all 0.2s var(--ease-smooth);
+  box-shadow: 0 2px 8px rgba(5, 150, 105, 0.25);
+}
+
+.actionBtn:hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 14px rgba(5, 150, 105, 0.35);
+}
+
+.actionBtn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* — Empty State — */
+.emptyState {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 4rem;
+  color: var(--text-muted);
+  gap: 0.75rem;
+}
+
+.emptyIcon {
+  color: var(--border-strong);
+  opacity: 0.6;
+}
+
+/* — Currency — */
+.currency {
+  font-family: var(--font-mono);
+  font-weight: 700;
+  color: var(--text-heading);
+}
